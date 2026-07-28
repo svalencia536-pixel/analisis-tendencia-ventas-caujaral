@@ -94,6 +94,30 @@ tbody tr:hover{background:#FAFBFA}
 tfoot td{font-weight:700;border-top:2px solid var(--gris);border-bottom:none;background:#FAFAFA}
 .tbox{max-height:520px;overflow:auto}
 .nota{background:#FFF8E5;border-left:4px solid #E8A317;padding:10px 14px;border-radius:4px;font-size:12px;margin-bottom:var(--gap);color:#5C4813}
+
+/* ---------- instructivo ---------- */
+.guia{max-width:900px}
+.guia .card{margin-bottom:var(--gap)}
+.guia h3{font-size:14px;color:var(--verde-mas);margin-bottom:8px}
+.guia p{margin-bottom:9px;color:var(--txt-sec);font-size:12.5px}
+.guia p strong{color:var(--txt)}
+.guia ul{margin:0 0 10px 18px}
+.guia li{margin-bottom:6px;color:var(--txt-sec);font-size:12.5px}
+.guia li strong{color:var(--txt)}
+.guia .paso{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px}
+.guia .num{flex:0 0 22px;height:22px;border-radius:50%;background:var(--verde);color:#fff;
+           font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.guia .paso div{flex:1;min-width:0}
+.guia .paso b{display:block;font-size:12.5px;color:var(--txt);margin-bottom:2px}
+.guia .paso span{font-size:12px;color:var(--txt-sec)}
+.chip{display:inline-block;padding:1px 7px;border-radius:9px;font-size:11px;font-weight:600;
+      background:var(--gris);color:var(--txt-sec);white-space:nowrap}
+.chip.v{background:#E8F5E2;color:#2E6B1C} .chip.a{background:var(--azul-pale);color:#04456F}
+.chip.r{background:#FDE7E7;color:#8C0000}
+.aviso{background:var(--azul-pale);border-left:4px solid var(--azul);padding:10px 13px;
+       border-radius:4px;font-size:12px;color:#04456F;margin-bottom:10px}
+.guia table{margin-top:4px}
+.guia td{vertical-align:top;font-size:12.5px}
 .foot{margin-top:20px;font-size:11px;color:var(--txt-sec);border-top:1px solid var(--gris);padding-top:12px}
 .hide{display:none}
 @media(max-width:1000px){.g2,.g21{grid-template-columns:1fr}.wrap{flex-direction:column}.side{width:100%;flex:auto;position:static;max-height:none}}
@@ -149,6 +173,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--gris);border-bottom:none;bac
     <button class="tab on" data-t="p">Participación</button>
     <button class="tab" data-t="c">Comparativo por año</button>
     <button class="tab" data-t="d">Detalle</button>
+    <button class="tab" data-t="g">Cómo usarlo</button>
   </div>
 
   <div class="nota" id="nota"></div>
@@ -236,6 +261,139 @@ tfoot td{font-weight:700;border-top:2px solid var(--gris);border-bottom:none;bac
       <div class="hint">Todas las combinaciones del filtro activo. Clic en el encabezado para ordenar.</div>
       <div class="tbox"><div id="tblDet"></div></div>
     </div>
+  </section>
+
+  <!-- TAB COMO USARLO -->
+  <section id="tab-g" class="hide">
+   <div class="guia">
+
+    <div class="card">
+      <h3>Para qué sirve este tablero</h3>
+      <p>Responde dos preguntas sobre la venta de Alimentos y Bebidas del club:
+         <strong>de qué se compone la venta</strong> (cuánto pesa la comida, el licor y las bebidas sin alcohol)
+         y <strong>cómo se mueve contra los años anteriores</strong>, para detectar dónde se está cayendo la venta
+         y dónde se está creciendo.</p>
+      <p>Los datos salen del mismo reporte de Power BI del club y se actualizan solos
+         <strong>todos los días a las 6:00 a.m.</strong> No hay que descargar ni refrescar nada a mano:
+         basta con abrir el link.</p>
+      <div class="aviso">
+        Todo lo que se ve en pantalla obedece a los filtros de la barra izquierda.
+        Si un número no cuadra con lo que esperabas, lo primero que hay que revisar son los filtros.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Los cuatro filtros de la barra izquierda</h3>
+
+      <div class="paso"><div class="num">1</div><div>
+        <b>Años</b>
+        <span>Marca los años que quieres ver. Con dos o más años marcados aparecen las comparaciones.
+              La tarjeta de variación y las columnas de variación siempre comparan
+              <strong>los dos años más recientes que tengas marcados</strong>.</span>
+      </div></div>
+
+      <div class="paso"><div class="num">2</div><div>
+        <b>Meses</b>
+        <span>Define el rango de meses (de un mes “a” otro). El rango se aplica <strong>por igual a todos los años</strong>,
+              que es lo que hace que la comparación sea justa. El botón
+              <span class="chip v">Ene – Jun (comparable)</span> lo deja en el tramo que ya está cerrado
+              en los tres años; <span class="chip">Todos los meses</span> lo abre de enero a diciembre.</span>
+      </div></div>
+
+      <div class="paso"><div class="num">3</div><div>
+        <b>Categoría y subcategoría</b>
+        <span>Cuatro categorías: Alimentos, Bebidas alcohólicas, Bebidas no alcohólicas y Otros.
+              La flecha <strong>▶</strong> abre la lista de subcategorías de esa categoría.
+              El <strong>número</strong> a la derecha (por ejemplo 41/41) indica cuántas subcategorías
+              tienes marcadas de las que hay. El botón <span class="chip a">solo</span> aísla esa
+              categoría o subcategoría y desmarca todo lo demás de un golpe — es el atajo más rápido
+              para analizar un producto puntual. Arriba hay un buscador para encontrar una subcategoría por nombre.</span>
+      </div></div>
+
+      <div class="paso"><div class="num">4</div><div>
+        <b>Ambientes</b>
+        <span>Los puntos de servicio (restaurantes, kioskos, bares). Desmarcar ambientes permite
+              analizar un solo punto o comparar un grupo contra otro.</span>
+      </div></div>
+
+      <p><strong>Los filtros se combinan.</strong> Por ejemplo: 2025 y 2026 + Ene–Jun + solo Bebidas alcohólicas
+         + un solo ambiente responde “¿cómo va el licor en ese punto contra el año pasado, sobre el mismo tramo?”.</p>
+    </div>
+
+    <div class="card">
+      <h3>Qué hay en cada pestaña</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td style="width:150px"><strong>Participación</strong></td>
+            <td>El <strong>peso</strong> de cada categoría: la torta general, la mezcla año por año,
+                la mezcla mes a mes y la composición de cada ambiente.
+                Aquí se lee la <em>estructura</em> de la venta, no si subió o bajó.</td>
+          </tr>
+          <tr>
+            <td><strong>Comparativo por año</strong></td>
+            <td>El <strong>movimiento</strong>: venta mensual con una línea por año, barras por categoría,
+                la evolución con línea de tendencia, el gráfico de ganancias y pérdidas,
+                y las tablas de subcategorías y ambientes con su variación. Es la pestaña para buscar caídas.</td>
+          </tr>
+          <tr>
+            <td><strong>Detalle</strong></td>
+            <td>La tabla completa ambiente × categoría × subcategoría con el filtro activo.
+                Sirve para verificar un número puntual o revisar el dato crudo.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Cómo leer los gráficos</h3>
+      <ul>
+        <li><strong>Línea de tendencia:</strong> la recta punteada sobre las barras. Muestra hacia dónde
+            va la venta descontando el sube y baja de cada mes. Si la recta baja, hay caída de fondo
+            aunque algún mes suelto haya sido bueno.</li>
+        <li><strong>R²:</strong> acompaña a la línea de tendencia y va de 0 a 1. Dice qué tan confiable es esa recta.
+            <span class="chip v">alto (sobre 0,7)</span> el comportamiento es parejo y la tendencia es sólida.
+            <span class="chip r">bajo (bajo 0,3)</span> los meses están muy dispersos: la recta es apenas
+            referencial y no conviene sacar conclusiones fuertes de ella.</li>
+        <li><strong>Dónde se ganó y dónde se perdió:</strong> barras hacia la derecha en verde
+            (creció frente al año anterior) y hacia la izquierda en rojo (cayó). Es la vista más rápida
+            para saber qué subcategoría explica una caída total.</li>
+        <li><strong>Barras 100%:</strong> todas llegan al mismo alto porque muestran <em>proporción</em>, no monto.
+            Una barra puede verse igual entre dos años y aun así representar una venta muy distinta.</li>
+        <li><strong>Tablas:</strong> clic en cualquier encabezado para ordenar por esa columna.
+            Útil para poner arriba las mayores caídas.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Tres cuidados al interpretar</h3>
+      <ul>
+        <li><strong>Comparar el mismo tramo.</strong> El año en curso está incompleto. Comparar su año completo
+            contra un año cerrado produce una caída falsa. Por eso existe el botón
+            <span class="chip v">Ene – Jun (comparable)</span>. Cuando el rango elegido no es comparable,
+            aparece un aviso amarillo arriba del tablero.</li>
+        <li><strong>Porcentaje y monto no son lo mismo.</strong> Una categoría puede perder participación
+            y aun así estar vendiendo más, si las otras crecieron más rápido. Siempre mira el peso
+            junto con el monto.</li>
+        <li><strong>Qué queda por fuera.</strong> El tablero excluye el consumo de funcionarios y la
+            clasificación “Dep”, igual que el reporte original de Power BI, para que las cifras cuadren
+            con la gerencia. Los valores están sin IVA ni servicio.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Preguntas frecuentes</h3>
+      <p><strong>¿Los datos están al día?</strong> Sí. Se refrescan solos todos los días a las 6:00 a.m.
+         La fecha exacta del último corte aparece al pie de esta página.</p>
+      <p><strong>Quedó todo en blanco.</strong> Es que no hay ninguna subcategoría marcada.
+         Pulsa <span class="chip">Todas</span> en la barra izquierda.</p>
+      <p><strong>¿Puedo compartir el link?</strong> Sí, es abierto y no pide clave.
+         Funciona igual en computador, tablet y celular.</p>
+      <p><strong>¿Puedo imprimirlo?</strong> Sí. Al imprimir se ocultan los filtros y las pestañas,
+         y queda solo el contenido de la vista actual.</p>
+    </div>
+
+   </div>
   </section>
 
   <div class="foot" id="foot"></div>
@@ -406,8 +564,12 @@ function initFiltros(){
   document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
     b.classList.add('on'); state.tab=b.dataset.t;
-    ['p','c','d'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hide',t!==state.tab));
-    render();
+    ['p','c','d','g'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hide',t!==state.tab));
+    /* el instructivo no depende de los filtros: se ocultan KPIs y aviso de comparabilidad */
+    const guia = state.tab==='g';
+    document.getElementById('kpis').classList.toggle('hide',guia);
+    document.getElementById('nota').classList.toggle('hide',guia);
+    if(!guia) render();
   });
 }
 
