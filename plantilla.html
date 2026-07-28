@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ventas A&amp;B - Club Lagos de Caujaral</title>
+<style>
+:root{
+  --verde:#66B448; --verde-osc:#179160; --verde-mas:#0F714A;
+  --azul:#0A71B7; --azul-med:#1B9CF4; --azul-claro:#70BBFF; --azul-pale:#DEEFFF;
+  --rojo:#E10000; --rojo-suave:#D64550;
+  --gris:#E6E6E6; --gris-med:#8A8886; --txt:#252423; --txt-sec:#605E5C;
+  --bg:#F3F4F3; --card:#FFFFFF; --radius:6px; --gap:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;background:var(--bg);color:var(--txt);font-size:13px;line-height:1.45}
+.wrap{display:flex;min-height:100vh}
+
+/* ---------- barra lateral (Navegacion, como el Power BI) ---------- */
+.side{width:228px;flex:0 0 228px;background:var(--card);border-right:1px solid var(--gris);padding:16px 14px;overflow-y:auto;max-height:100vh;position:sticky;top:0}
+.side h2{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--txt-sec);margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--verde)}
+.fgroup{margin-bottom:18px}
+.fgroup > label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--txt-sec);margin-bottom:6px}
+.chk{display:flex;align-items:center;gap:7px;padding:3px 0;cursor:pointer;font-size:12.5px}
+.chk input{accent-color:var(--verde);cursor:pointer;width:14px;height:14px}
+.lista{max-height:190px;overflow-y:auto;border:1px solid var(--gris);border-radius:4px;padding:6px 8px;background:#FAFAFA}
+/* acordeon: categoria con su llave para agrupar/desagrupar subcategorias */
+.cat{border:1px solid var(--gris);border-radius:4px;margin-bottom:5px;overflow:hidden}
+.cabecera{display:flex;align-items:center;gap:6px;padding:6px 7px;background:#FAFAFA}
+.llave{border:none;background:none;cursor:pointer;padding:0 2px;font-size:10px;color:var(--txt-sec);width:15px;flex:0 0 15px;line-height:1;transition:transform .12s}
+.llave:hover{color:var(--verde-mas)}
+.llave.abierta{transform:rotate(90deg)}
+.cabecera .nom{flex:1;min-width:0;font-size:12px;font-weight:600;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cabecera .cta{font-size:10px;color:var(--txt-sec);background:var(--gris);border-radius:8px;padding:1px 6px;flex:0 0 auto}
+.subs{display:none;max-height:186px;overflow-y:auto;padding:5px 8px 7px 24px;border-top:1px solid var(--gris);background:#fff}
+.subs.abierta{display:block}
+.subs .chk{font-size:11.5px;color:var(--txt-sec)}
+.subs .chk:hover{color:var(--txt)}
+.solo{font-size:9.5px;color:var(--azul);cursor:pointer;flex:0 0 auto;border:1px solid var(--azul-claro);
+      border-radius:3px;padding:0 4px;background:#fff;line-height:15px;opacity:.75}
+.solo:hover{opacity:1;background:var(--azul);color:#fff;border-color:var(--azul)}
+.subs .nsub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.subs .nsub:hover{color:var(--azul);text-decoration:underline}
+.busca{width:100%;padding:5px 8px;border:1px solid var(--gris);border-radius:4px;margin-bottom:7px;font-family:inherit;font-size:12px}
+.busca:focus{outline:none;border-color:var(--verde)}
+.botonera{display:flex;gap:6px;margin-top:7px}
+.botonera .btn{margin:0;flex:1}
+.vacio{background:#FFF8E5;border:1px solid #E8A317;border-radius:var(--radius);padding:22px;text-align:center;color:#5C4813}
+select,button{font-family:inherit;font-size:12.5px}
+select{width:100%;padding:5px 7px;border:1px solid var(--gris);border-radius:4px;background:#fff;color:var(--txt)}
+.row2{display:flex;gap:8px;align-items:center}
+.row2 select{flex:1}
+.btn{width:100%;padding:7px;margin-top:8px;border:1px solid var(--verde);background:var(--verde);color:#fff;border-radius:4px;cursor:pointer;font-weight:600}
+.btn:hover{background:var(--verde-osc);border-color:var(--verde-osc)}
+.btn.sec{background:#fff;color:var(--txt-sec);border-color:var(--gris);font-weight:500;margin-top:5px}
+.btn.sec:hover{background:#F0F0F0;color:var(--txt)}
+
+/* ---------- contenido ---------- */
+.main{flex:1;min-width:0;padding:16px 20px 40px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.top h1{font-size:19px;font-weight:600;color:var(--verde-mas);line-height:1.25}
+.top .sub{font-size:12px;color:var(--txt-sec);margin-top:3px}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--gris);margin-bottom:var(--gap)}
+.tab{padding:9px 18px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--txt-sec);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--txt)}
+.tab.on{color:var(--verde-mas);border-bottom-color:var(--verde)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:var(--gap);margin-bottom:var(--gap)}
+.kpi{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.07);border-left:4px solid var(--verde)}
+.kpi.b1{border-left-color:var(--azul)} .kpi.b2{border-left-color:var(--azul-claro)} .kpi.b3{border-left-color:var(--gris-med)}
+.kpi .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--txt-sec);margin-bottom:5px}
+.kpi .val{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.kpi .dt{font-size:11.5px;color:var(--txt-sec);margin-top:3px}
+.up{color:var(--verde-osc);font-weight:600} .down{color:var(--rojo);font-weight:600}
+
+.grid{display:grid;gap:var(--gap);margin-bottom:var(--gap)}
+.g2{grid-template-columns:1fr 1fr}
+.g21{grid-template-columns:1.35fr 1fr}
+.card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.07);min-width:0}
+.card h3{font-size:12.5px;font-weight:600;margin-bottom:2px}
+.card .hint{font-size:11px;color:var(--txt-sec);margin-bottom:10px}
+.svgbox{width:100%;overflow-x:auto}
+svg{display:block;max-width:100%;height:auto}
+.leg{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:11.5px;color:var(--txt-sec)}
+.leg span{display:flex;align-items:center;gap:5px}
+.dot{width:10px;height:10px;border-radius:2px;flex:0 0 10px}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--gris);color:var(--txt-sec);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--txt);background:#FAFAFA}
+th.n,td.n{text-align:right}
+td{padding:7px 10px;border-bottom:1px solid #F2F2F2}
+tbody tr:hover{background:#FAFBFA}
+tfoot td{font-weight:700;border-top:2px solid var(--gris);border-bottom:none;background:#FAFAFA}
+.tbox{max-height:520px;overflow:auto}
+.nota{background:#FFF8E5;border-left:4px solid #E8A317;padding:10px 14px;border-radius:4px;font-size:12px;margin-bottom:var(--gap);color:#5C4813}
+.foot{margin-top:20px;font-size:11px;color:var(--txt-sec);border-top:1px solid var(--gris);padding-top:12px}
+.hide{display:none}
+@media(max-width:1000px){.g2,.g21{grid-template-columns:1fr}.wrap{flex-direction:column}.side{width:100%;flex:auto;position:static;max-height:none}}
+@media print{.side{display:none}.tabs{display:none}.card,.kpi{box-shadow:none;border:1px solid var(--gris)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<aside class="side">
+  <h2>Navegación</h2>
+
+  <div class="fgroup">
+    <label>Años</label>
+    <div id="fAnios"></div>
+  </div>
+
+  <div class="fgroup">
+    <label>Meses</label>
+    <div class="row2">
+      <select id="m1"></select><span style="color:var(--txt-sec)">a</span><select id="m2"></select>
+    </div>
+    <button class="btn" id="btnComp">Ene – Jun (comparable)</button>
+    <button class="btn sec" id="btnTodo">Todos los meses</button>
+  </div>
+
+  <div class="fgroup">
+    <label>Categoría y subcategoría</label>
+    <input type="text" class="busca" id="buscaSub" placeholder="Buscar subcategoría..." autocomplete="off">
+    <div id="fCats"></div>
+    <div class="botonera">
+      <button class="btn sec" id="btnSubAll">Todas</button>
+      <button class="btn sec" id="btnSubNone">Ninguna</button>
+    </div>
+  </div>
+
+  <div class="fgroup">
+    <label>Ambiente</label>
+    <div class="lista" id="fAmb"></div>
+    <button class="btn sec" id="btnAmbAll">Todos / ninguno</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="top">
+    <div>
+      <h1>Ventas A&amp;B · Participación y comparativo anual</h1>
+      <div class="sub">Club Lagos de Caujaral · Fuente: Power BI (tabla <code>consumos</code>) · 2024 – 2026</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-t="p">Participación</button>
+    <button class="tab" data-t="c">Comparativo por año</button>
+    <button class="tab" data-t="d">Detalle</button>
+  </div>
+
+  <div class="nota" id="nota"></div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <!-- TAB PARTICIPACION -->
+  <section id="tab-p">
+    <div class="grid g21">
+      <div class="card">
+        <h3>Participación por categoría</h3>
+        <div class="hint">Peso de cada categoría sobre la venta del periodo filtrado.</div>
+        <div class="svgbox" id="chDonut"></div>
+      </div>
+      <div class="card">
+        <h3>Mezcla por año</h3>
+        <div class="hint">Composición porcentual de la venta en cada año.</div>
+        <div class="svgbox" id="chMixAnio"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Mezcla mes a mes</h3>
+        <div class="hint">Participación de cada categoría por mes, en los años seleccionados.</div>
+        <div class="svgbox" id="chMixMes"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Participación por ambiente</h3>
+        <div class="hint">Cómo se compone la venta de cada punto de servicio. Ordenado por venta total.</div>
+        <div class="svgbox" id="chAmb"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB COMPARATIVO -->
+  <section id="tab-c" class="hide">
+    <div class="grid g2">
+      <div class="card">
+        <h3>Venta mensual por año</h3>
+        <div class="hint">Una línea por año. Permite ver estacionalidad y quiebres.</div>
+        <div class="svgbox" id="chLineas"></div>
+      </div>
+      <div class="card">
+        <h3>Venta por categoría y año</h3>
+        <div class="hint">Barras agrupadas sobre el mismo rango de meses.</div>
+        <div class="svgbox" id="chCatAnio"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Evolución mensual con línea de tendencia</h3>
+        <div class="hint" id="hintTend"></div>
+        <div class="svgbox" id="chTend"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Dónde se ganó y dónde se perdió venta</h3>
+        <div class="hint" id="hintDiv"></div>
+        <div class="svgbox" id="chDiv"></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Subcategorías: comparativo y variación</h3>
+        <div class="hint">Clic en el encabezado para ordenar. La variación compara los dos últimos años seleccionados.</div>
+        <div class="tbox"><div id="tblSub"></div></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Ambientes: comparativo y variación</h3>
+        <div class="hint">Mismo criterio, agrupado por punto de servicio.</div>
+        <div class="tbox"><div id="tblAmb"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB DETALLE -->
+  <section id="tab-d" class="hide">
+    <div class="card">
+      <h3>Detalle ambiente × categoría × subcategoría</h3>
+      <div class="hint">Todas las combinaciones del filtro activo. Clic en el encabezado para ordenar.</div>
+      <div class="tbox"><div id="tblDet"></div></div>
+    </div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</main>
+</div>
+
+<script>
+/*__DATA__*/
+
+/* ==================== utilidades ==================== */
+const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const CATS=['Alimentos','Bebidas alcohólicas','Bebidas no alcohólicas','Otros'];
+const CCOL=['#66B448','#0A71B7','#70BBFF','#8A8886'];
+const ANIOS=[...new Set(F.map(r=>r[0]))].sort();
+
+const nfCOP=new Intl.NumberFormat('es-CO',{maximumFractionDigits:0});
+function money(v){return '$'+nfCOP.format(Math.round(v));}
+function corto(v){
+  const a=Math.abs(v), s=v<0?'-':'';
+  if(a>=1e9) return s+'$'+(a/1e9).toFixed(2)+' MM';
+  if(a>=1e6) return s+'$'+(a/1e6).toFixed(0)+' M';
+  if(a>=1e3) return s+'$'+(a/1e3).toFixed(0)+' K';
+  return s+'$'+Math.round(a);
+}
+function pct(v){return (v*100).toFixed(1)+'%';}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ==================== estado ==================== */
+/* subcategorias agrupadas bajo su categoria, ordenadas por peso de venta */
+const PESO=new Map();
+F.forEach(r=>PESO.set(r[3],(PESO.get(r[3])||0)+r[5]));
+const SUBS_DE=[[],[],[],[]];
+AGR.forEach((a,i)=>SUBS_DE[a[1]].push(i));
+SUBS_DE.forEach(l=>l.sort((x,y)=>(PESO.get(y)||0)-(PESO.get(x)||0)));
+
+const state={
+  anios:new Set(ANIOS),
+  m1:1, m2:6,
+  subs:new Set(AGR.map((_,i)=>i)),   // filtro real: subcategorias
+  abierta:new Set(),                 // categorias desplegadas
+  busca:'',                          // texto del buscador de subcategorias
+  amb:new Set(AMB.map((_,i)=>i)),
+  tab:'p',
+  sort:{sub:['d',-1], amb:['d',-1], det:['v',-1]}
+};
+
+/* una categoria esta activa si al menos una de sus subcategorias esta marcada */
+function catActiva(ci){ return SUBS_DE[ci].some(i=>state.subs.has(i)); }
+function catsActivas(){ return [0,1,2,3].filter(catActiva); }
+
+function filtradas(){
+  return F.filter(r=> state.anios.has(r[0]) && r[1]>=state.m1 && r[1]<=state.m2
+                   && state.amb.has(r[2]) && state.subs.has(r[3]));
+}
+function aniosSel(){return ANIOS.filter(a=>state.anios.has(a));}
+function parAnios(){const a=aniosSel();return a.length>=2?[a[a.length-2],a[a.length-1]]:[null,a[0]||null];}
+
+/* ==================== filtros ==================== */
+/* panel de categoria con llave para agrupar/desagrupar sus subcategorias */
+function pintarCats(){
+  const fc=document.getElementById('fCats');
+  const q=(state.busca||'').trim().toUpperCase();
+
+  fc.innerHTML=CATS.map((c,ci)=>{
+    const todas=SUBS_DE[ci];
+    if(!todas.length) return '';
+    // con busqueda activa solo se muestran las que coinciden
+    const subs=q?todas.filter(i=>AGR[i][0].toUpperCase().includes(q)):todas;
+    if(q && !subs.length) return '';
+    const marcadas=todas.filter(i=>state.subs.has(i)).length;
+    const abierta=q?true:state.abierta.has(ci);   // buscar despliega solo
+    return `<div class="cat">
+      <div class="cabecera">
+        <button class="llave ${abierta?'abierta':''}" data-llave="${ci}" title="${abierta?'Agrupar':'Desagrupar'} subcategorías">&#9654;</button>
+        <span class="dot" style="background:${CCOL[ci]}"></span>
+        <input type="checkbox" data-cat="${ci}" ${marcadas>0?'checked':''} style="accent-color:${CCOL[ci]};width:14px;height:14px;cursor:pointer" title="Marcar o desmarcar toda la categoría">
+        <span class="nom" data-llave="${ci}" title="${esc(c)}">${esc(c)}</span>
+        <span class="cta">${marcadas}/${todas.length}</span>
+        <span class="solo" data-solocat="${ci}" title="Ver solo esta categoría">solo</span>
+      </div>
+      <div class="subs ${abierta?'abierta':''}">
+        ${subs.map(i=>`<label class="chk"><input type="checkbox" data-sub="${i}" ${state.subs.has(i)?'checked':''}><span class="nsub" data-solo="${i}" title="Clic para ver solo esta">${esc(AGR[i][0])}</span><span class="solo" data-solo="${i}">solo</span></label>`).join('')}
+      </div>
+    </div>`;
+  }).join('') || '<div style="font-size:11.5px;color:var(--txt-sec);padding:6px 2px">Sin coincidencias.</div>';
+
+  /* estado intermedio cuando la categoria esta marcada a medias */
+  fc.querySelectorAll('input[data-cat]').forEach(chk=>{
+    const ci=+chk.dataset.cat, subs=SUBS_DE[ci];
+    const m=subs.filter(i=>state.subs.has(i)).length;
+    chk.indeterminate = m>0 && m<subs.length;
+  });
+
+  fc.querySelectorAll('[data-llave]').forEach(el=>el.onclick=()=>{
+    const ci=+el.dataset.llave;
+    state.abierta.has(ci)?state.abierta.delete(ci):state.abierta.add(ci);
+    pintarCats();
+  });
+  fc.querySelectorAll('input[data-cat]').forEach(chk=>chk.onchange=()=>{
+    const ci=+chk.dataset.cat;
+    SUBS_DE[ci].forEach(i=>chk.checked?state.subs.add(i):state.subs.delete(i));
+    pintarCats(); render();
+  });
+  fc.querySelectorAll('input[data-sub]').forEach(chk=>chk.onchange=()=>{
+    const i=+chk.dataset.sub;
+    chk.checked?state.subs.add(i):state.subs.delete(i);
+    pintarCats(); render();
+  });
+  fc.querySelectorAll('[data-solo]').forEach(el=>el.onclick=(ev)=>{
+    ev.preventDefault(); ev.stopPropagation();
+    state.subs=new Set([+el.dataset.solo]);
+    pintarCats(); render();
+  });
+  fc.querySelectorAll('[data-solocat]').forEach(el=>el.onclick=(ev)=>{
+    ev.preventDefault(); ev.stopPropagation();
+    const ci=+el.dataset.solocat;
+    state.subs=new Set(SUBS_DE[ci]);
+    state.abierta.add(ci);
+    pintarCats(); render();
+  });
+}
+
+function initFiltros(){
+  const fa=document.getElementById('fAnios');
+  fa.innerHTML=ANIOS.map(a=>`<label class="chk"><input type="checkbox" data-a="${a}" ${state.anios.has(a)?'checked':''}>${a}</label>`).join('');
+  fa.querySelectorAll('input').forEach(i=>i.onchange=()=>{
+    const a=+i.dataset.a; i.checked?state.anios.add(a):state.anios.delete(a);
+    if(state.anios.size===0){state.anios.add(a);i.checked=true;}
+    render();
+  });
+
+  pintarCats();
+  document.getElementById('btnSubAll').onclick=()=>{
+    state.subs=new Set(AGR.map((_,i)=>i)); pintarCats(); render();
+  };
+  document.getElementById('btnSubNone').onclick=()=>{
+    state.subs=new Set(); pintarCats(); render();
+  };
+  const bs=document.getElementById('buscaSub');
+  bs.oninput=()=>{ state.busca=bs.value; pintarCats(); };   // el input vive fuera del render, no pierde el foco
+
+  const orden=AMB.map((n,i)=>[i,n]).sort((a,b)=>a[1].localeCompare(b[1]));
+  const fam=document.getElementById('fAmb');
+  fam.innerHTML=orden.map(([i,n])=>`<label class="chk"><input type="checkbox" data-m="${i}" checked>${esc(n)}</label>`).join('');
+  fam.querySelectorAll('input').forEach(i=>i.onchange=()=>{
+    const m=+i.dataset.m; i.checked?state.amb.add(m):state.amb.delete(m);
+    if(state.amb.size===0){state.amb.add(m);i.checked=true;}
+    render();
+  });
+  document.getElementById('btnAmbAll').onclick=()=>{
+    const todos=state.amb.size===AMB.length;
+    state.amb=new Set(todos?[0]:AMB.map((_,i)=>i));
+    fam.querySelectorAll('input').forEach(i=>i.checked=state.amb.has(+i.dataset.m));
+    render();
+  };
+
+  const s1=document.getElementById('m1'), s2=document.getElementById('m2');
+  MESES.forEach((m,i)=>{
+    s1.insertAdjacentHTML('beforeend',`<option value="${i+1}">${m}</option>`);
+    s2.insertAdjacentHTML('beforeend',`<option value="${i+1}">${m}</option>`);
+  });
+  s1.value=state.m1; s2.value=state.m2;
+  s1.onchange=()=>{state.m1=+s1.value; if(state.m2<state.m1){state.m2=state.m1;s2.value=state.m2;} render();};
+  s2.onchange=()=>{state.m2=+s2.value; if(state.m1>state.m2){state.m1=state.m2;s1.value=state.m1;} render();};
+  document.getElementById('btnComp').onclick=()=>{state.m1=1;state.m2=6;s1.value=1;s2.value=6;render();};
+  document.getElementById('btnTodo').onclick=()=>{state.m1=1;state.m2=12;s1.value=1;s2.value=12;render();};
+
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); state.tab=b.dataset.t;
+    ['p','c','d'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('hide',t!==state.tab));
+    render();
+  });
+}
+
+/* ==================== graficos SVG ==================== */
+function donut(items,size){
+  const R=size/2, r=R*0.6, cx=R, cy=R;
+  const tot=items.reduce((a,b)=>a+b.v,0)||1;
+  let ang=-Math.PI/2, out='';
+  items.forEach(it=>{
+    const frac=it.v/tot, a2=ang+frac*Math.PI*2;
+    const big=frac>0.5?1:0;
+    const p=(rad,a)=>[cx+rad*Math.cos(a),cy+rad*Math.sin(a)];
+    const [x1,y1]=p(R,ang),[x2,y2]=p(R,a2),[x3,y3]=p(r,a2),[x4,y4]=p(r,ang);
+    if(frac>0.9999){
+      out+=`<circle cx="${cx}" cy="${cy}" r="${(R+r)/2}" fill="none" stroke="${it.c}" stroke-width="${R-r}"><title>${esc(it.l)}: ${money(it.v)} (100%)</title></circle>`;
+    }else if(frac>0){
+      out+=`<path d="M${x1} ${y1}A${R} ${R} 0 ${big} 1 ${x2} ${y2}L${x3} ${y3}A${r} ${r} 0 ${big} 0 ${x4} ${y4}Z" fill="${it.c}" stroke="#fff" stroke-width="1.5"><title>${esc(it.l)}: ${money(it.v)} (${pct(frac)})</title></path>`;
+    }
+    ang=a2;
+  });
+  out+=`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="11" fill="#605E5C">Venta total</text>`;
+  out+=`<text x="${cx}" y="${cy+15}" text-anchor="middle" font-size="16" font-weight="700" fill="#252423">${corto(tot)}</text>`;
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">${out}</svg>`;
+}
+
+/* barras apiladas 100% verticales */
+function stack100(grupos,W,H){
+  const ml=42,mb=34,mt=10,mr=8;
+  const iw=W-ml-mr, ih=H-mt-mb;
+  const bw=Math.min(58,iw/grupos.length*0.66), step=iw/grupos.length;
+  let out='';
+  [0,25,50,75,100].forEach(p=>{
+    const y=mt+ih*(1-p/100);
+    out+=`<line x1="${ml}" y1="${y}" x2="${W-mr}" y2="${y}" stroke="#EDEDED"/>`;
+    out+=`<text x="${ml-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#8A8886">${p}%</text>`;
+  });
+  grupos.forEach((g,i)=>{
+    const cx=ml+step*i+step/2, tot=g.vals.reduce((a,b)=>a+b,0)||1;
+    let acc=0;
+    g.vals.forEach((v,ci)=>{
+      if(v<=0) return;
+      const h=ih*v/tot, y=mt+ih-acc-h;
+      out+=`<rect x="${cx-bw/2}" y="${y}" width="${bw}" height="${h}" fill="${CCOL[ci]}"><title>${esc(g.l)} · ${CATS[ci]}: ${money(v)} (${pct(v/tot)})</title></rect>`;
+      if(h>15) out+=`<text x="${cx}" y="${y+h/2+3.5}" text-anchor="middle" font-size="9.5" font-weight="600" fill="#fff">${(v/tot*100).toFixed(0)}%</text>`;
+      acc+=h;
+    });
+    out+=`<text x="${cx}" y="${H-mb+15}" text-anchor="middle" font-size="10.5" fill="#605E5C">${esc(g.l)}</text>`;
+    out+=`<text x="${cx}" y="${H-mb+27}" text-anchor="middle" font-size="9.5" fill="#8A8886">${corto(tot)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${out}</svg>`;
+}
+
+/* barras apiladas 100% horizontales */
+function stack100H(filas,W){
+  const ml=168,mr=64,mt=6,bh=19,gap=8;
+  const H=mt+filas.length*(bh+gap)+6, iw=W-ml-mr;
+  let out='';
+  filas.forEach((f,i)=>{
+    const y=mt+i*(bh+gap), tot=f.vals.reduce((a,b)=>a+b,0)||1;
+    let acc=0;
+    f.vals.forEach((v,ci)=>{
+      if(v<=0) return;
+      const w=iw*v/tot;
+      out+=`<rect x="${ml+acc}" y="${y}" width="${w}" height="${bh}" fill="${CCOL[ci]}"><title>${esc(f.l)} · ${CATS[ci]}: ${money(v)} (${pct(v/tot)})</title></rect>`;
+      if(w>26) out+=`<text x="${ml+acc+w/2}" y="${y+bh/2+3.5}" text-anchor="middle" font-size="9.5" font-weight="600" fill="#fff">${(v/tot*100).toFixed(0)}</text>`;
+      acc+=w;
+    });
+    out+=`<text x="${ml-8}" y="${y+bh/2+4}" text-anchor="end" font-size="11" fill="#252423">${esc(f.l)}</text>`;
+    out+=`<text x="${W-mr+6}" y="${y+bh/2+4}" font-size="10.5" fill="#605E5C">${corto(tot)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${out}</svg>`;
+}
+
+/* lineas por anio */
+function lineas(series,labels,W,H){
+  const ml=58,mb=30,mt=12,mr=12;
+  const iw=W-ml-mr, ih=H-mt-mb;
+  let max=0; series.forEach(s=>s.data.forEach(v=>{if(v>max)max=v;}));
+  max=max*1.08||1;
+  const COLS=['#8A8886','#0A71B7','#66B448','#E10000'];
+  const x=i=>ml+(labels.length>1?iw*i/(labels.length-1):iw/2);
+  const y=v=>mt+ih*(1-v/max);
+  let out='';
+  for(let k=0;k<=4;k++){
+    const yy=mt+ih*k/4, val=max*(1-k/4);
+    out+=`<line x1="${ml}" y1="${yy}" x2="${W-mr}" y2="${yy}" stroke="#EDEDED"/>`;
+    out+=`<text x="${ml-6}" y="${yy+4}" text-anchor="end" font-size="10" fill="#8A8886">${corto(val)}</text>`;
+  }
+  labels.forEach((l,i)=>out+=`<text x="${x(i)}" y="${H-mb+16}" text-anchor="middle" font-size="10.5" fill="#605E5C">${esc(l)}</text>`);
+  series.forEach((s,si)=>{
+    const c=COLS[si%COLS.length];
+    const pts=s.data.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+    out+=`<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"/>`;
+    s.data.forEach((v,i)=>{
+      out+=`<circle cx="${x(i)}" cy="${y(v)}" r="3.6" fill="#fff" stroke="${c}" stroke-width="2"><title>${esc(s.l)} · ${esc(labels[i])}: ${money(v)}</title></circle>`;
+    });
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${out}</svg>`;
+}
+
+/* barras agrupadas: categoria x anio */
+function agrupadas(cats,series,W,H){
+  const ml=58,mb=42,mt=12,mr=10;
+  const iw=W-ml-mr, ih=H-mt-mb;
+  let max=0; series.forEach(s=>s.data.forEach(v=>{if(v>max)max=v;}));
+  max=max*1.1||1;
+  const COLS=['#8A8886','#0A71B7','#66B448','#E10000'];
+  const step=iw/cats.length, bw=Math.min(26,step*0.72/series.length);
+  let out='';
+  for(let k=0;k<=4;k++){
+    const yy=mt+ih*k/4;
+    out+=`<line x1="${ml}" y1="${yy}" x2="${W-mr}" y2="${yy}" stroke="#EDEDED"/>`;
+    out+=`<text x="${ml-6}" y="${yy+4}" text-anchor="end" font-size="10" fill="#8A8886">${corto(max*(1-k/4))}</text>`;
+  }
+  cats.forEach((c,ci)=>{
+    const c0=ml+step*ci+step/2-(bw*series.length)/2;
+    series.forEach((s,si)=>{
+      const v=s.data[ci]||0, h=ih*v/max;
+      out+=`<rect x="${c0+si*bw}" y="${mt+ih-h}" width="${bw-2}" height="${h}" fill="${COLS[si%COLS.length]}" rx="1"><title>${esc(c)} · ${esc(s.l)}: ${money(v)}</title></rect>`;
+    });
+    const pal=String(c).split(' ');
+    out+=`<text x="${ml+step*ci+step/2}" y="${H-mb+15}" text-anchor="middle" font-size="10" fill="#605E5C">${esc(pal[0])}</text>`;
+    if(pal.length>1) out+=`<text x="${ml+step*ci+step/2}" y="${H-mb+26}" text-anchor="middle" font-size="10" fill="#605E5C">${esc(pal.slice(1).join(' '))}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${out}</svg>`;
+}
+
+/* barras apiladas en pesos + linea de tendencia (minimos cuadrados) */
+function barrasTend(grupos,W,H){
+  const ml=64,mb=46,mt=16,mr=14;
+  const iw=W-ml-mr, ih=H-mt-mb;
+  const tot=grupos.map(g=>g.vals.reduce((a,b)=>a+b,0));
+  const max=(Math.max(...tot,1))*1.14;
+  const step=iw/grupos.length, bw=Math.min(44,step*0.66);
+  const y=v=>mt+ih*(1-v/max);
+  const cx=i=>ml+step*i+step/2;
+  let out='';
+  for(let k=0;k<=4;k++){
+    const yy=mt+ih*k/4;
+    out+=`<line x1="${ml}" y1="${yy}" x2="${W-mr}" y2="${yy}" stroke="#EDEDED"/>`;
+    out+=`<text x="${ml-6}" y="${yy+4}" text-anchor="end" font-size="10" fill="#8A8886">${corto(max*(1-k/4))}</text>`;
+  }
+  grupos.forEach((g,i)=>{
+    let acc=0;
+    g.vals.forEach((v,ci)=>{
+      if(v<=0) return;
+      const h=ih*v/max, yy=mt+ih-acc-h;
+      out+=`<rect x="${cx(i)-bw/2}" y="${yy}" width="${bw}" height="${h}" fill="${CCOL[ci]}"><title>${esc(g.l)} · ${CATS[ci]}: ${money(v)}</title></rect>`;
+      acc+=h;
+    });
+    out+=`<rect x="${cx(i)-bw/2}" y="${mt}" width="${bw}" height="${ih}" fill="transparent"><title>${esc(g.l)} · Total: ${money(tot[i])}</title></rect>`;
+    out+=`<text x="${cx(i)}" y="${H-mb+16}" text-anchor="middle" font-size="9.5" fill="#605E5C" transform="rotate(-38 ${cx(i)} ${H-mb+16})">${esc(g.l)}</text>`;
+  });
+
+  /* regresion lineal sobre los totales */
+  const n=grupos.length;
+  let m=0,b=tot[0]||0,r2=null;
+  if(n>=2){
+    let sx=0,sy=0,sxy=0,sxx=0;
+    for(let i=0;i<n;i++){sx+=i;sy+=tot[i];sxy+=i*tot[i];sxx+=i*i;}
+    const den=(n*sxx-sx*sx);
+    m=den?(n*sxy-sx*sy)/den:0;
+    b=(sy-m*sx)/n;
+    const my=sy/n; let sst=0,sse=0;
+    for(let i=0;i<n;i++){sst+=(tot[i]-my)**2; sse+=(tot[i]-(m*i+b))**2;}
+    r2=sst?1-sse/sst:null;
+    out+=`<line x1="${cx(0)}" y1="${y(b)}" x2="${cx(n-1)}" y2="${y(b+m*(n-1))}" stroke="#E10000" stroke-width="2.4" stroke-dasharray="7,4" stroke-linecap="round"><title>Tendencia lineal: ${m>=0?'+':''}${money(m)} por mes</title></line>`;
+    out+=`<circle cx="${cx(n-1)}" cy="${y(b+m*(n-1))}" r="4" fill="#E10000"/>`;
+  }
+  const svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${out}</svg>`;
+  const dir=m>=0?'up':'down';
+  const cap=n<2?'' : `<div style="margin-top:8px;font-size:12px;color:var(--txt-sec)">
+      <span style="display:inline-block;width:22px;border-top:2.4px dashed #E10000;vertical-align:middle;margin-right:6px"></span>
+      Tendencia lineal: <b class="${dir}">${m>=0?'+':''}${money(m)} por mes</b>
+      ${r2!==null?` · R² ${r2.toFixed(2)}`:''}
+      · proyección del último punto: <b>${money(b+m*(n-1))}</b></div>`;
+  return svg+cap;
+}
+
+/* barras divergentes: variacion en $ */
+function divergente(items,W){
+  const ml=178,mr=88,mt=6,bh=17,gap=6;
+  const H=mt+items.length*(bh+gap)+8, iw=W-ml-mr, mid=ml+iw/2;
+  const max=Math.max(1,...items.map(i=>Math.abs(i.v)));
+  let out=`<line x1="${mid}" y1="${mt}" x2="${mid}" y2="${H-6}" stroke="#D0D0D0"/>`;
+  items.forEach((it,i)=>{
+    const y=mt+i*(bh+gap), w=(Math.abs(it.v)/max)*(iw/2);
+    const pos=it.v>=0, x=pos?mid:mid-w;
+    out+=`<rect x="${x}" y="${y}" width="${w}" height="${bh}" fill="${pos?'#66B448':'#E10000'}" rx="1"><title>${esc(it.l)}: ${pos?'+':''}${money(it.v)} (${it.p===null?'nuevo':(it.p>=0?'+':'')+it.p.toFixed(1)+'%'})</title></rect>`;
+    out+=`<text x="${ml-8}" y="${y+bh/2+4}" text-anchor="end" font-size="10.5" fill="#252423">${esc(it.l)}</text>`;
+    out+=`<text x="${W-mr+6}" y="${y+bh/2+4}" font-size="10.5" font-weight="600" fill="${pos?'#179160':'#E10000'}">${pos?'+':''}${corto(it.v)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${out}</svg>`;
+}
+
+function leyenda(cats,cols){
+  return '<div class="leg">'+cats.map((c,i)=>`<span><span class="dot" style="background:${cols[i]}"></span>${esc(c)}</span>`).join('')+'</div>';
+}
+
+/* ==================== tablas ==================== */
+function tablaComp(cont,filas,etiqueta,skey){
+  const aa=aniosSel();
+  const [pa,ua]=parAnios();
+  const [sc,sd]=state.sort[skey];
+  const val=(f,k)=> k==='l'?f.l : k==='d'?f.d : k==='p'?(f.p===null?-1e15:f.p) : (f.tot||0);
+  filas=[...filas].sort((a,b)=>{
+    const x=val(a,sc), y=val(b,sc);
+    if(typeof x==='string') return sd*x.localeCompare(y);
+    return sd*(x-y);
+  });
+  const th=(k,t,cls)=>`<th class="${cls||''}" data-k="${k}">${t}${sc===k?(sd>0?' ▲':' ▼'):''}</th>`;
+  let h='<table><thead><tr>'+th('l',etiqueta);
+  aa.forEach(a=>h+=`<th class="n">${a}</th>`);
+  h+=th('d','Δ $','n')+th('p','Δ %','n')+'</tr></thead><tbody>';
+  filas.forEach(f=>{
+    h+=`<tr><td>${esc(f.l)}</td>`;
+    aa.forEach(a=>h+=`<td class="n">${f.a[a]?money(f.a[a]):'—'}</td>`);
+    const cl=f.d>=0?'up':'down';
+    h+=`<td class="n ${cl}">${f.d>=0?'+':''}${corto(f.d)}</td>`;
+    h+=`<td class="n ${cl}">${f.p===null?'nuevo':(f.p>=0?'+':'')+f.p.toFixed(1)+'%'}</td></tr>`;
+  });
+  const tot={}; aa.forEach(a=>tot[a]=filas.reduce((s,f)=>s+(f.a[a]||0),0));
+  const td=(tot[ua]||0)-(tot[pa]||0), tp=tot[pa]?td/tot[pa]*100:null;
+  h+='</tbody><tfoot><tr><td>TOTAL</td>';
+  aa.forEach(a=>h+=`<td class="n">${money(tot[a])}</td>`);
+  h+=`<td class="n ${td>=0?'up':'down'}">${td>=0?'+':''}${corto(td)}</td>`;
+  h+=`<td class="n ${td>=0?'up':'down'}">${tp===null?'—':(tp>=0?'+':'')+tp.toFixed(1)+'%'}</td>`;
+  h+='</tr></tfoot></table>';
+  cont.innerHTML=h;
+  cont.querySelectorAll('th[data-k]').forEach(t=>t.onclick=()=>{
+    const k=t.dataset.k;
+    state.sort[skey] = (sc===k)?[k,-sd]:[k,k==='l'?1:-1];
+    render();
+  });
+}
+
+/* ==================== render ==================== */
+function agrupar(rows,keyFn){
+  const m=new Map();
+  rows.forEach(r=>{const k=keyFn(r); m.set(k,(m.get(k)||0)+r[5]);});
+  return m;
+}
+function filasComp(rows,keyFn){
+  const aa=aniosSel(), [pa,ua]=parAnios();
+  const m=new Map();
+  rows.forEach(r=>{
+    const k=keyFn(r);
+    if(!m.has(k)) m.set(k,{l:k,a:{},tot:0});
+    const o=m.get(k); o.a[r[0]]=(o.a[r[0]]||0)+r[5]; o.tot+=r[5];
+  });
+  const out=[...m.values()];
+  out.forEach(o=>{
+    const v0=o.a[pa]||0, v1=o.a[ua]||0;
+    o.d=v1-v0; o.p=(pa===null)?null:(v0>0?((v1-v0)/v0*100):null);
+  });
+  return out;
+}
+
+function render(){
+  const rows=filtradas();
+  const aa=aniosSel(), [pa,ua]=parAnios();
+
+  /* nota de comparabilidad */
+  const nota=document.getElementById('nota');
+  const parcial = state.anios.has(2026) && state.m2>=7;
+  nota.innerHTML = parcial
+    ? `<b>Ojo con la comparación:</b> julio 2026 va hasta el día ${META.ultimoDia} y 2026 solo tiene datos hasta julio. Para comparar contra 2024 y 2025 sobre el mismo terreno usa el botón <b>“Ene – Jun (comparable)”</b>.`
+    : `Comparación sobre el mismo rango en todos los años: <b>${MESES[state.m1-1]} – ${MESES[state.m2-1]}</b>. Es la lectura válida para medir caídas reales.`;
+
+  /* sin subcategorias marcadas no hay nada que graficar */
+  if(state.subs.size===0){
+    document.getElementById('kpis').innerHTML=
+      `<div class="vacio" style="grid-column:1/-1">
+         <b>No hay ninguna subcategoría seleccionada.</b><br>
+         Marca las que quieras ver, usa <b>“solo”</b> para aislar una, o pulsa <b>“Todas”</b>.
+       </div>`;
+    ['chDonut','chMixAnio','chMixMes','chAmb','chLineas','chCatAnio','chTend','chDiv','tblSub','tblAmb','tblDet']
+      .forEach(id=>{const e=document.getElementById(id); if(e) e.innerHTML='';});
+    document.getElementById('foot').textContent='';
+    return;
+  }
+
+  /* KPIs */
+  const tot=rows.reduce((s,r)=>s+r[5],0);
+  const porCat=[0,0,0,0];
+  rows.forEach(r=>porCat[AGR[r[3]][1]]+=r[5]);
+  const totUA=rows.filter(r=>r[0]===ua).reduce((s,r)=>s+r[5],0);
+  const totPA=pa?rows.filter(r=>r[0]===pa).reduce((s,r)=>s+r[5],0):0;
+  const dif=totUA-totPA, difp=totPA?dif/totPA*100:null;
+
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi"><div class="lbl">Venta del periodo</div><div class="val">${corto(tot)}</div><div class="dt">${aa.join(' · ')} · ${MESES[state.m1-1]}–${MESES[state.m2-1]}</div></div>
+    <div class="kpi"><div class="lbl">Alimentos</div><div class="val" style="color:#66B448">${tot?pct(porCat[0]/tot):'—'}</div><div class="dt">${corto(porCat[0])}</div></div>
+    <div class="kpi b1"><div class="lbl">Bebidas alcohólicas</div><div class="val" style="color:#0A71B7">${tot?pct(porCat[1]/tot):'—'}</div><div class="dt">${corto(porCat[1])}</div></div>
+    <div class="kpi b2"><div class="lbl">Bebidas no alcohólicas</div><div class="val" style="color:#3B9BE0">${tot?pct(porCat[2]/tot):'—'}</div><div class="dt">${corto(porCat[2])}</div></div>
+    <div class="kpi b3"><div class="lbl">${ua} vs ${pa||'—'}</div><div class="val ${dif>=0?'up':'down'}">${difp===null?'—':(difp>=0?'+':'')+difp.toFixed(1)+'%'}</div><div class="dt">${dif>=0?'+':''}${corto(dif)}</div></div>`;
+
+  if(state.tab==='p'){
+    const items=CATS.map((c,i)=>({l:c,v:porCat[i],c:CCOL[i]})).filter(x=>x.v>0);
+    document.getElementById('chDonut').innerHTML=donut(items,260)+leyenda(items.map(i=>i.l),items.map(i=>i.c));
+
+    const gA=aa.map(a=>{
+      const v=[0,0,0,0];
+      rows.filter(r=>r[0]===a).forEach(r=>v[AGR[r[3]][1]]+=r[5]);
+      return {l:String(a),vals:v};
+    });
+    document.getElementById('chMixAnio').innerHTML=stack100(gA,Math.max(240,gA.length*110),260)+leyenda(CATS,CCOL);
+
+    const gM=[];
+    aa.forEach(a=>{for(let m=state.m1;m<=state.m2;m++){
+      const v=[0,0,0,0]; let hay=false;
+      rows.filter(r=>r[0]===a&&r[1]===m).forEach(r=>{v[AGR[r[3]][1]]+=r[5];hay=true;});
+      if(hay) gM.push({l:MESES[m-1]+' '+String(a).slice(2),vals:v});
+    }});
+    document.getElementById('chMixMes').innerHTML=stack100(gM,Math.max(600,gM.length*56),250)+leyenda(CATS,CCOL);
+
+    const mAmb=new Map();
+    rows.forEach(r=>{
+      if(!mAmb.has(r[2])) mAmb.set(r[2],[0,0,0,0]);
+      mAmb.get(r[2])[AGR[r[3]][1]]+=r[5];
+    });
+    const fAmb=[...mAmb.entries()].map(([i,v])=>({l:AMB[i],vals:v,t:v.reduce((a,b)=>a+b,0)}))
+      .sort((a,b)=>b.t-a.t);
+    document.getElementById('chAmb').innerHTML=stack100H(fAmb,860)+leyenda(CATS,CCOL);
+  }
+
+  if(state.tab==='c'){
+    const labels=[]; for(let m=state.m1;m<=state.m2;m++) labels.push(MESES[m-1]);
+    const ser=aa.map(a=>({l:String(a),data:labels.map((_,i)=>
+      rows.filter(r=>r[0]===a&&r[1]===state.m1+i).reduce((s,r)=>s+r[5],0))}));
+    document.getElementById('chLineas').innerHTML=lineas(ser,labels,520,270)+leyenda(ser.map(s=>s.l),['#8A8886','#0A71B7','#66B448','#E10000']);
+
+    const idxAct=catsActivas();
+    const catsAct=idxAct.map(i=>CATS[i]);
+    const serC=aa.map(a=>({l:String(a),data:idxAct.map(ci=>
+      rows.filter(r=>r[0]===a&&AGR[r[3]][1]===ci).reduce((s,r)=>s+r[5],0))}));
+    document.getElementById('chCatAnio').innerHTML=agrupadas(catsAct,serC,520,270)+leyenda(serC.map(s=>s.l),['#8A8886','#0A71B7','#66B448','#E10000']);
+
+    /* evolucion mensual cronologica + tendencia */
+    const gT=[];
+    aa.forEach(a=>{for(let m=state.m1;m<=state.m2;m++){
+      const v=[0,0,0,0]; let hay=false;
+      rows.filter(r=>r[0]===a&&r[1]===m).forEach(r=>{v[AGR[r[3]][1]]+=r[5];hay=true;});
+      if(hay) gT.push({l:MESES[m-1]+' '+String(a).slice(2),vals:v});
+    }});
+    const continuo = (state.m1===1 && state.m2===12);
+    document.getElementById('hintTend').innerHTML =
+      `Venta en pesos por mes, en orden cronológico, apilada por categoría. La línea roja punteada es la regresión lineal sobre el total mensual.`+
+      (continuo ? '' : ` <b>Serie no continua:</b> solo se incluyen los meses ${MESES[state.m1-1]}–${MESES[state.m2-1]} de cada año, así que la tendencia describe esos meses comparables, no los 12 del año.`);
+    document.getElementById('chTend').innerHTML=barrasTend(gT,Math.max(620,gT.length*54),290)+leyenda(CATS,CCOL);
+
+    const fs=filasComp(rows,r=>AGR[r[3]][0]).filter(f=>Math.abs(f.d)>0);
+    const top=[...fs].sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,18)
+                     .sort((a,b)=>b.d-a.d).map(f=>({l:f.l,v:f.d,p:f.p}));
+    document.getElementById('hintDiv').textContent=
+      pa? `Variación en pesos de ${pa} a ${ua}, mismo rango de meses. Las 18 subcategorías que más mueven la aguja.`
+        : 'Selecciona al menos dos años para ver la variación.';
+    document.getElementById('chDiv').innerHTML= pa? divergente(top,880) : '<div style="padding:20px;color:#605E5C">Selecciona dos o más años.</div>';
+
+    tablaComp(document.getElementById('tblSub'),fs,'Subcategoría','sub');
+    tablaComp(document.getElementById('tblAmb'),filasComp(rows,r=>AMB[r[2]]),'Ambiente','amb');
+  }
+
+  if(state.tab==='d'){
+    const m=new Map();
+    rows.forEach(r=>{
+      const k=AMB[r[2]]+'||'+CATS[AGR[r[3]][1]]+'||'+AGR[r[3]][0];
+      if(!m.has(k)) m.set(k,{k,v:0,q:0,a:{}});
+      const o=m.get(k); o.v+=r[5]; o.q+=r[4]; o.a[r[0]]=(o.a[r[0]]||0)+r[5];
+    });
+    const [sc,sd]=state.sort.det;
+    let arr=[...m.values()];
+    arr.sort((a,b)=> sc==='k' ? sd*a.k.localeCompare(b.k) : sd*(a[sc]-b[sc]));
+    const th=(k,t,cls)=>`<th class="${cls||''}" data-k="${k}">${t}${sc===k?(sd>0?' ▲':' ▼'):''}</th>`;
+    let h='<table><thead><tr>'+th('k','Ambiente / Categoría / Subcategoría')+th('q','Cantidad','n')+th('v','Venta','n')+'</tr></thead><tbody>';
+    arr.slice(0,400).forEach(o=>{
+      const p=o.k.split('||');
+      h+=`<tr><td>${esc(p[0])} · <b>${esc(p[1])}</b> · ${esc(p[2])}</td><td class="n">${nfCOP.format(Math.round(o.q))}</td><td class="n">${money(o.v)}</td></tr>`;
+    });
+    h+=`</tbody><tfoot><tr><td>TOTAL (${arr.length} combinaciones${arr.length>400?', se muestran 400':''})</td><td class="n">${nfCOP.format(Math.round(arr.reduce((s,o)=>s+o.q,0)))}</td><td class="n">${money(arr.reduce((s,o)=>s+o.v,0))}</td></tr></tfoot></table>`;
+    const cont=document.getElementById('tblDet');
+    cont.innerHTML=h;
+    cont.querySelectorAll('th[data-k]').forEach(t=>t.onclick=()=>{
+      const k=t.dataset.k;
+      state.sort.det=(sc===k)?[k,-sd]:[k,k==='k'?1:-1];
+      render();
+    });
+  }
+
+  document.getElementById('foot').innerHTML=
+    `${rows.length.toLocaleString('es-CO')} combinaciones en el filtro · Datos hasta el ${META.ultimoDia}/${String(META.ultimoMes).padStart(2,'0')}/${META.ultimoAnio} · `+
+    `Excluye clasificación “Dep” y consumo de funcionarios, igual que el reporte de Power BI · `+
+    `Bebidas alcohólicas agrupa licores, vinos, cervezas, cocteles, happy hours y descorches.`;
+}
+
+initFiltros();
+render();
+</script>
+</body>
+</html>

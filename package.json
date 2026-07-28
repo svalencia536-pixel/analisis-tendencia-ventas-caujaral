@@ -1,0 +1,14 @@
+{
+  "name": "dashboard-caujaral",
+  "version": "1.0.0",
+  "description": "Dashboard de ventas A&B del Club Lagos de Caujaral. Lee el reporte publico de Power BI y se refresca solo todos los dias a las 6:00 am hora Colombia.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "private": true
+}
